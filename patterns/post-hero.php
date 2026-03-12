@@ -9,6 +9,6 @@
 <div class="wp-block-group post-hero container">
 	<!-- wp:post-terms {"term":"category","className":"post-hero__term"} /-->
 	<!-- wp:post-title {"level":1,"className":"post-hero__title"} /-->
-	<!-- wp:post-author-name {"isLink":true,"className":"post-hero__author"} /-->
+	<!-- wp:shortcode -->[adamsons_author_name class="post-hero__author" link="1"]<!-- /wp:shortcode -->
 </div>
 <!-- /wp:group -->

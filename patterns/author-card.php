@@ -17,15 +17,15 @@
 			<p class="author-card__eyebrow caps">For more information, get in touch</p>
 			<!-- /wp:paragraph -->
 
-			<!-- wp:post-author-name {"className":"author-card__name"} /-->
-			<!-- wp:post-author-biography {"className":"author-card__bio"} /-->
+			<!-- wp:shortcode -->[adamsons_author_name class="author-card__name"]<!-- /wp:shortcode -->
+			<!-- wp:shortcode -->[adamsons_author_bio class="author-card__bio"]<!-- /wp:shortcode -->
 		</div>
 		<!-- /wp:group -->
 
 		<!-- wp:buttons {"className":"author-card__actions"} -->
 		<div class="wp-block-buttons author-card__actions">
 			<!-- wp:button {"className":"btn btn--tertiary"} -->
-			<div class="wp-block-button btn btn--tertiary"><a class="wp-block-button__link wp-element-button" href="#">See profile</a></div>
+			<div class="wp-block-button btn btn--tertiary"><a class="wp-block-button__link wp-element-button" href="[author_url]">See profile</a></div>
 			<!-- /wp:button -->
 		</div>
 		<!-- /wp:buttons -->

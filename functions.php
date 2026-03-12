@@ -216,6 +216,93 @@ function adamsons_register_people_post_type() {
 }
 add_action( 'init', 'adamsons_register_people_post_type' );
 
+function adamsons_register_jobs_post_type() {
+	register_post_type(
+		'jobs',
+		array(
+			'labels' => array(
+				'name'               => __( 'Jobs', 'adamsons' ),
+				'singular_name'      => __( 'Job', 'adamsons' ),
+				'add_new'            => __( 'Add New', 'adamsons' ),
+				'add_new_item'       => __( 'Add New Job', 'adamsons' ),
+				'edit_item'          => __( 'Edit Job', 'adamsons' ),
+				'new_item'           => __( 'New Job', 'adamsons' ),
+				'view_item'          => __( 'View Job', 'adamsons' ),
+				'search_items'       => __( 'Search Jobs', 'adamsons' ),
+				'not_found'          => __( 'No jobs found.', 'adamsons' ),
+				'not_found_in_trash' => __( 'No jobs found in Trash.', 'adamsons' ),
+				'all_items'          => __( 'All Jobs', 'adamsons' ),
+				'menu_name'          => __( 'Job Listings', 'adamsons' ),
+			),
+			'public'             => true,
+			'show_in_rest'       => true,
+			'menu_icon'          => 'dashicons-megaphone',
+			'supports'           => array( 'title', 'editor' ),
+			'has_archive'        => false,
+			'rewrite'            => array( 'slug' => 'jobs' ),
+		)
+	);
+
+	register_taxonomy(
+		'job_type',
+		array( 'jobs' ),
+		array(
+			'labels' => array(
+				'name'                       => __( 'Job Types', 'adamsons' ),
+				'singular_name'              => __( 'Job Type', 'adamsons' ),
+				'search_items'               => __( 'Search Job Types', 'adamsons' ),
+				'popular_items'              => __( 'Popular Job Types', 'adamsons' ),
+				'all_items'                  => __( 'All Job Types', 'adamsons' ),
+				'edit_item'                  => __( 'Edit Job Type', 'adamsons' ),
+				'update_item'                => __( 'Update Job Type', 'adamsons' ),
+				'add_new_item'               => __( 'Add New Job Type', 'adamsons' ),
+				'new_item_name'              => __( 'New Job Type Name', 'adamsons' ),
+				'separate_items_with_commas' => __( 'Separate job types with commas', 'adamsons' ),
+				'add_or_remove_items'        => __( 'Add or remove job types', 'adamsons' ),
+				'choose_from_most_used'      => __( 'Choose from the most used job types', 'adamsons' ),
+				'menu_name'                  => __( 'Job Types', 'adamsons' ),
+			),
+			'public'            => true,
+			'show_ui'           => true,
+			'show_in_rest'      => true,
+			'hierarchical'      => false,
+			'show_admin_column' => true,
+			'meta_box_cb'       => false,
+			'rewrite'           => array( 'slug' => 'job-type' ),
+		)
+	);
+}
+add_action( 'init', 'adamsons_register_jobs_post_type' );
+
+function adamsons_register_authors_post_type() {
+	register_post_type(
+		'authors',
+		array(
+			'labels' => array(
+				'name'               => __( 'Authors', 'adamsons' ),
+				'singular_name'      => __( 'Author', 'adamsons' ),
+				'add_new'            => __( 'Add New', 'adamsons' ),
+				'add_new_item'       => __( 'Add New', 'adamsons' ),
+				'edit_item'          => __( 'Edit Author', 'adamsons' ),
+				'new_item'           => __( 'New Author', 'adamsons' ),
+				'view_item'          => __( 'View Author', 'adamsons' ),
+				'search_items'       => __( 'Search Authors', 'adamsons' ),
+				'not_found'          => __( 'No authors found.', 'adamsons' ),
+				'not_found_in_trash' => __( 'No authors found in Trash.', 'adamsons' ),
+				'all_items'          => __( 'All Authors', 'adamsons' ),
+				'menu_name'          => __( 'Authors', 'adamsons' ),
+			),
+			'public'             => true,
+			'show_in_rest'       => true,
+			'menu_icon'          => 'dashicons-book',
+			'supports'           => array( 'title', 'editor', 'excerpt' ),
+			'has_archive'        => false,
+			'rewrite'            => array( 'slug' => 'authors' ),
+		)
+	);
+}
+add_action( 'init', 'adamsons_register_authors_post_type' );
+
 function adamsons_register_people_acf_fields() {
 	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 		return;
@@ -286,6 +373,154 @@ function adamsons_register_people_acf_fields() {
 }
 add_action( 'acf/init', 'adamsons_register_people_acf_fields' );
 
+function adamsons_register_jobs_acf_fields() {
+	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
+		return;
+	}
+
+	acf_add_local_field_group(
+		array(
+			'key'    => 'group_adamsons_jobs_fields',
+			'title'  => 'Job Details',
+			'fields' => array(
+				array(
+					'key'   => 'field_adamsons_job_client',
+					'label' => 'Client',
+					'name'  => 'job_client',
+					'type'  => 'text',
+				),
+				array(
+					'key'   => 'field_adamsons_job_role',
+					'label' => 'Role',
+					'name'  => 'job_role',
+					'type'  => 'text',
+				),
+				array(
+					'key'   => 'field_adamsons_job_location',
+					'label' => 'Location',
+					'name'  => 'job_location',
+					'type'  => 'text',
+				),
+				array(
+					'key'           => 'field_adamsons_job_type',
+					'label'         => 'Type',
+					'name'          => 'job_type',
+					'type'          => 'taxonomy',
+					'taxonomy'      => 'job_type',
+					'field_type'    => 'select',
+					'return_format' => 'id',
+					'add_term'      => 1,
+					'save_terms'    => 1,
+					'load_terms'    => 1,
+				),
+			),
+			'location' => array(
+				array(
+					array(
+						'param'    => 'post_type',
+						'operator' => '==',
+						'value'    => 'jobs',
+					),
+				),
+			),
+		)
+	);
+}
+add_action( 'acf/init', 'adamsons_register_jobs_acf_fields' );
+
+function adamsons_register_authors_acf_fields() {
+	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
+		return;
+	}
+
+	acf_add_local_field_group(
+		array(
+			'key'    => 'group_adamsons_authors_fields',
+			'title'  => 'Author Details',
+			'fields' => array(
+				array(
+					'key'           => 'field_adamsons_author_image',
+					'label'         => 'Image',
+					'name'          => 'author_image',
+					'type'          => 'image',
+					'return_format' => 'id',
+					'preview_size'  => 'medium',
+					'library'       => 'all',
+				),
+				array(
+					'key'   => 'field_adamsons_author_job_title',
+					'label' => 'Job Title',
+					'name'  => 'author_job_title',
+					'type'  => 'text',
+				),
+				array(
+					'key'   => 'field_adamsons_author_company_name',
+					'label' => 'Company Name',
+					'name'  => 'author_company_name',
+					'type'  => 'text',
+				),
+				array(
+					'key'   => 'field_adamsons_author_telephone',
+					'label' => 'Telephone Number',
+					'name'  => 'author_telephone',
+					'type'  => 'text',
+				),
+				array(
+					'key'   => 'field_adamsons_author_email',
+					'label' => 'Email Address',
+					'name'  => 'author_email',
+					'type'  => 'email',
+				),
+				array(
+					'key'   => 'field_adamsons_author_linked_url',
+					'label' => 'Linked URL',
+					'name'  => 'author_linked_url',
+					'type'  => 'url',
+				),
+			),
+			'location' => array(
+				array(
+					array(
+						'param'    => 'post_type',
+						'operator' => '==',
+						'value'    => 'authors',
+					),
+				),
+			),
+		)
+	);
+
+	acf_add_local_field_group(
+		array(
+			'key'    => 'group_adamsons_post_author_relationship',
+			'title'  => 'Author',
+			'fields' => array(
+				array(
+					'key'           => 'field_adamsons_post_author_profile',
+					'label'         => 'Author',
+					'name'          => 'post_author_profile',
+					'type'          => 'relationship',
+					'post_type'     => array( 'authors' ),
+					'filters'       => array( 'search' ),
+					'elements'      => array(),
+					'return_format' => 'id',
+					'max'           => 1,
+				),
+			),
+			'location' => array(
+				array(
+					array(
+						'param'    => 'post_type',
+						'operator' => '==',
+						'value'    => 'post',
+					),
+				),
+			),
+		)
+	);
+}
+add_action( 'acf/init', 'adamsons_register_authors_acf_fields' );
+
 function adamsons_register_people_grid_pattern() {
 	if ( ! function_exists( 'register_block_pattern' ) ) {
 		return;
@@ -324,6 +559,84 @@ function adamsons_register_people_grid_pattern() {
 }
 add_action( 'init', 'adamsons_register_people_grid_pattern', 1 );
 
+function adamsons_get_selected_author_profile_id( $post_id = 0 ) {
+	$post_id = (int) $post_id;
+
+	if ( $post_id < 1 ) {
+		$post_id = get_the_ID();
+	}
+
+	if ( $post_id < 1 ) {
+		return 0;
+	}
+
+	$selected_author = null;
+
+	if ( function_exists( 'get_field' ) ) {
+		$selected_author = get_field( 'post_author_profile', $post_id );
+	}
+
+	if ( $selected_author === null ) {
+		$selected_author = get_post_meta( $post_id, 'post_author_profile', true );
+	}
+
+	$author_id = 0;
+
+	if ( is_array( $selected_author ) ) {
+		$first = reset( $selected_author );
+		if ( is_object( $first ) && isset( $first->ID ) ) {
+			$author_id = (int) $first->ID;
+		} elseif ( is_numeric( $first ) ) {
+			$author_id = (int) $first;
+		}
+	} elseif ( is_object( $selected_author ) && isset( $selected_author->ID ) ) {
+		$author_id = (int) $selected_author->ID;
+	} elseif ( is_numeric( $selected_author ) ) {
+		$author_id = (int) $selected_author;
+	}
+
+	if ( $author_id < 1 || get_post_type( $author_id ) !== 'authors' ) {
+		return 0;
+	}
+
+	return $author_id;
+}
+
+function adamsons_get_author_profile_field_value( $author_id, $field_name ) {
+	$author_id = (int) $author_id;
+	if ( $author_id < 1 || $field_name === '' ) {
+		return '';
+	}
+
+	if ( function_exists( 'get_field' ) ) {
+		return get_field( $field_name, $author_id );
+	}
+
+	return get_post_meta( $author_id, $field_name, true );
+}
+
+function adamsons_get_author_display_text( $author_id ) {
+	$author_id = (int) $author_id;
+	if ( $author_id < 1 ) {
+		return '';
+	}
+
+	$name = trim( get_the_title( $author_id ) );
+	if ( $name === '' ) {
+		return '';
+	}
+
+	$job_title = trim( (string) adamsons_get_author_profile_field_value( $author_id, 'author_job_title' ) );
+	$company   = trim( (string) adamsons_get_author_profile_field_value( $author_id, 'author_company_name' ) );
+	$details   = trim( $job_title . ' ' . $company );
+
+	if ( $details !== '' ) {
+		$name .= ', ' . $details;
+	}
+
+	return $name;
+}
+
 function adamsons_author_image_shortcode($atts) {
 	if (!is_singular()) {
 		return '';
@@ -334,12 +647,12 @@ function adamsons_author_image_shortcode($atts) {
 		return '';
 	}
 
-	$author_id = (int) get_post_field('post_author', $post_id);
+	$author_id = adamsons_get_selected_author_profile_id($post_id);
 	if (!$author_id) {
 		return '';
 	}
 
-	$image_id = (int) get_user_meta($author_id, 'adamsons_author_image_id', true);
+	$image_id = (int) adamsons_get_author_profile_field_value($author_id, 'author_image');
 	if (!$image_id) {
 		return '';
 	}
@@ -356,7 +669,7 @@ function adamsons_author_image_shortcode($atts) {
 	$size = max(1, (int) $atts['size']);
 	$class = trim(sanitize_text_field($atts['class']));
 	$classes = trim('adamsons-author-image ' . $class);
-	$alt_text = get_the_author_meta('display_name', $author_id);
+	$alt_text = get_the_title($author_id);
 
 	$image = wp_get_attachment_image(
 		$image_id,
@@ -376,6 +689,90 @@ function adamsons_author_image_shortcode($atts) {
 	);
 }
 add_shortcode('adamsons_author_image', 'adamsons_author_image_shortcode');
+
+function adamsons_author_name_shortcode( $atts ) {
+	if ( ! is_singular() ) {
+		return '';
+	}
+
+	$post_id   = get_the_ID();
+	$author_id = adamsons_get_selected_author_profile_id( $post_id );
+	if ( ! $author_id ) {
+		return '';
+	}
+
+	$atts = shortcode_atts(
+		array(
+			'class' => '',
+			'link'  => '0',
+			'tag'   => 'p',
+		),
+		$atts,
+		'adamsons_author_name'
+	);
+
+	$allowed_tags = array( 'p', 'div', 'span', 'h2', 'h3' );
+	$tag          = strtolower( (string) $atts['tag'] );
+	if ( ! in_array( $tag, $allowed_tags, true ) ) {
+		$tag = 'p';
+	}
+
+	$class      = trim( sanitize_text_field( $atts['class'] ) );
+	$class_attr = $class !== '' ? ' class="' . esc_attr( $class ) . '"' : '';
+
+	$text = adamsons_get_author_display_text( $author_id );
+	if ( $text === '' ) {
+		return '';
+	}
+
+	$inner = esc_html( $text );
+	if ( in_array( strtolower( (string) $atts['link'] ), array( '1', 'true', 'yes' ), true ) ) {
+		$inner = '<a href="' . esc_url( get_permalink( $author_id ) ) . '">' . $inner . '</a>';
+	}
+
+	return sprintf(
+		'<%1$s%2$s>%3$s</%1$s>',
+		esc_attr( $tag ),
+		$class_attr,
+		$inner
+	);
+}
+add_shortcode( 'adamsons_author_name', 'adamsons_author_name_shortcode' );
+
+function adamsons_author_bio_shortcode( $atts ) {
+	if ( ! is_singular() ) {
+		return '';
+	}
+
+	$post_id   = get_the_ID();
+	$author_id = adamsons_get_selected_author_profile_id( $post_id );
+	if ( ! $author_id ) {
+		return '';
+	}
+
+	$atts = shortcode_atts(
+		array(
+			'class' => '',
+		),
+		$atts,
+		'adamsons_author_bio'
+	);
+
+	$bio = trim( (string) get_post_field( 'post_excerpt', $author_id ) );
+	if ( $bio === '' ) {
+		$bio = trim( wp_strip_all_tags( (string) get_post_field( 'post_content', $author_id ) ) );
+	}
+
+	if ( $bio === '' ) {
+		return '';
+	}
+
+	$class      = trim( sanitize_text_field( $atts['class'] ) );
+	$class_attr = $class !== '' ? ' class="' . esc_attr( $class ) . '"' : '';
+
+	return '<p' . $class_attr . '>' . esc_html( $bio ) . '</p>';
+}
+add_shortcode( 'adamsons_author_bio', 'adamsons_author_bio_shortcode' );
 
 function adamsons_get_related_posts($post_id, $limit = 3) {
 	$post_id = (int) $post_id;
@@ -726,9 +1123,11 @@ add_action('wp_before_admin_bar_render', 'remove_admin_bar_comments');
 // Remove comments page in admin menu
 function remove_comments_admin_menu() {
     remove_menu_page('edit-comments.php');
-	remove_menu_page( 'edit.php?post_type=acf-field-group' ); // advanced custom fields
+	//remove_menu_page( 'edit.php?post_type=acf-field-group' ); // advanced custom fields
+	remove_submenu_page( 'options-general.php', 'cpto-options' ); // post order
+	remove_submenu_page( 'options-general.php', 'cb-carousel-settings' ); // carousel slider settings
 }
-add_action('admin_menu', 'remove_comments_admin_menu');
+add_action('admin_menu', 'remove_comments_admin_menu', 999);
 
 // Redirect any user trying to access comments page
 function redirect_comments_page() {
@@ -807,246 +1206,6 @@ add_action( 'breadcrumb_block_single_prepend', function ( $post, $breadcrumbs_in
 
 }, 10, 2 );
 
-/**
- * Add Job Title + Company fields to user profile
- */
-add_action('show_user_profile', 'ni_extra_user_fields');
-add_action('edit_user_profile', 'ni_extra_user_fields');
-
-function ni_extra_user_fields($user) {
-	?>
-	<h3>Professional Details</h3>
-	<table class="form-table">
-		<tr>
-			<th><label for="job_title">Job Title</label></th>
-			<td>
-				<input type="text" name="job_title" id="job_title"
-					value="<?php echo esc_attr(get_user_meta($user->ID, 'job_title', true)); ?>"
-					class="regular-text" />
-			</td>
-		</tr>
-		<tr>
-			<th><label for="company_name">Company</label></th>
-			<td>
-				<input type="text" name="company_name" id="company_name"
-					value="<?php echo esc_attr(get_user_meta($user->ID, 'company_name', true)); ?>"
-					class="regular-text" />
-			</td>
-		</tr>
-	</table>
-	<?php
-}
-
-add_action('personal_options_update', 'ni_save_extra_user_fields');
-add_action('edit_user_profile_update', 'ni_save_extra_user_fields');
-
-function ni_save_extra_user_fields($user_id) {
-	update_user_meta($user_id, 'job_title', sanitize_text_field($_POST['job_title'] ?? ''));
-	update_user_meta($user_id, 'company_name', sanitize_text_field($_POST['company_name'] ?? ''));
-}
-
-/**
- * Author image upload field
- */
-add_action('show_user_profile', 'adamsons_author_image_field');
-add_action('edit_user_profile', 'adamsons_author_image_field');
-
-function adamsons_author_image_field($user) {
-	$image_id = (int) get_user_meta($user->ID, 'adamsons_author_image_id', true);
-	$preview  = $image_id
-		? wp_get_attachment_image($image_id, array(96, 96), false, array(
-			'id'    => 'adamsons-author-image-preview',
-			'style' => 'display:block;margin:0;border-radius:999px;',
-		))
-		: '<img id="adamsons-author-image-preview" src="" alt="" style="display:none;margin-bottom:8px;border-radius:999px;" />';
-	?>
-	<h3>Author Image</h3>
-	<table class="form-table">
-		<tr>
-			<th><label for="adamsons_author_image_id">Profile Image</label></th>
-			<td>
-				<?php echo wp_kses_post($preview); ?>
-				<input type="hidden" name="adamsons_author_image_id" id="adamsons_author_image_id" value="<?php echo esc_attr($image_id); ?>" />
-				<button type="button" class="button" id="adamsons-author-image-upload" style="display:block;margin:8px 0 8px">Upload image</button>
-				<button type="button" class="button" id="adamsons-author-image-remove" style="display:block;margin:0 0 8px">Remove image</button>
-			</td>
-		</tr>
-	</table>
-	<?php
-}
-
-add_action('personal_options_update', 'adamsons_save_author_image');
-add_action('edit_user_profile_update', 'adamsons_save_author_image');
-
-function adamsons_save_author_image($user_id) {
-	if (!current_user_can('edit_user', $user_id)) {
-		return;
-	}
-
-	$image_id = isset($_POST['adamsons_author_image_id'])
-		? (int) $_POST['adamsons_author_image_id']
-		: 0;
-
-	if ($image_id) {
-		update_user_meta($user_id, 'adamsons_author_image_id', $image_id);
-	} else {
-		delete_user_meta($user_id, 'adamsons_author_image_id');
-	}
-}
-
-add_action('admin_enqueue_scripts', 'adamsons_author_image_admin_scripts');
-
-function adamsons_author_image_admin_scripts($hook) {
-	if ($hook !== 'profile.php' && $hook !== 'user-edit.php') {
-		return;
-	}
-
-	wp_enqueue_media();
-	wp_enqueue_script('jquery');
-
-	$script = <<<JS
-(function() {
-  var frame;
-  function init() {
-    var uploadBtn = document.getElementById('adamsons-author-image-upload');
-    if (!uploadBtn) return;
-    var removeBtn = document.getElementById('adamsons-author-image-remove');
-    var input = document.getElementById('adamsons_author_image_id');
-    var preview = document.getElementById('adamsons-author-image-preview');
-
-    uploadBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      if (frame) {
-        frame.open();
-        return;
-      }
-      frame = wp.media({
-        title: 'Select or upload author image',
-        button: { text: 'Use this image' },
-        multiple: false
-      });
-      frame.on('select', function() {
-        var attachment = frame.state().get('selection').first().toJSON();
-        if (!attachment || !attachment.id) return;
-        input.value = attachment.id;
-        var url = (attachment.sizes && attachment.sizes.thumbnail) ? attachment.sizes.thumbnail.url : attachment.url;
-        preview.src = url;
-        preview.style.display = 'block';
-      });
-      frame.open();
-    });
-
-    if (removeBtn) {
-      removeBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        input.value = '';
-        preview.src = '';
-        preview.style.display = 'none';
-      });
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();
-JS;
-
-	wp_add_inline_script('jquery', $script);
-}
-
-add_filter('get_avatar', 'adamsons_override_avatar_with_author_image', 10, 6);
-
-function adamsons_override_avatar_with_author_image($avatar, $id_or_email, $size, $default, $alt, $args) {
-	$user = false;
-
-	if (is_numeric($id_or_email)) {
-		$user = get_user_by('id', (int) $id_or_email);
-	} elseif ($id_or_email instanceof WP_User) {
-		$user = $id_or_email;
-	} elseif ($id_or_email instanceof WP_Post) {
-		$user = get_user_by('id', (int) $id_or_email->post_author);
-	} elseif (is_object($id_or_email) && isset($id_or_email->user_id)) {
-		$user = get_user_by('id', (int) $id_or_email->user_id);
-	} elseif (is_string($id_or_email) && is_email($id_or_email)) {
-		$user = get_user_by('email', $id_or_email);
-	}
-
-	if (!$user) {
-		return $avatar;
-	}
-
-	$image_id = (int) get_user_meta($user->ID, 'adamsons_author_image_id', true);
-	if (!$image_id) {
-		return $avatar;
-	}
-
-	$classes = array('avatar', 'avatar-' . (int) $size, 'photo');
-	if (!empty($args['class'])) {
-		$extra = is_array($args['class']) ? $args['class'] : array($args['class']);
-		$classes = array_merge($classes, $extra);
-	}
-
-	$class_attr = implode(' ', array_map('sanitize_html_class', $classes));
-	$alt_text   = $alt ? $alt : $user->display_name;
-
-	$img = wp_get_attachment_image(
-		$image_id,
-		array($size, $size),
-		false,
-		array(
-			'class' => $class_attr,
-			'alt'   => $alt_text,
-		)
-	);
-
-	return $img ? $img : $avatar;
-}
-
-add_filter('render_block', function($block_content, $block) {
-
-	if ($block['blockName'] !== 'core/post-author-name') {
-		return $block_content;
-	}
-
-	if (!is_singular()) {
-		return $block_content;
-	}
-
-	$author_id = get_post_field('post_author', get_the_ID());
-	if (!$author_id) {
-		return $block_content;
-	}
-
-	$job_title = get_user_meta($author_id, 'job_title', true);
-	$company   = get_user_meta($author_id, 'company_name', true);
-
-	if (!$job_title && !$company) {
-		return $block_content;
-	}
-
-	$extra = '';
-
-	if ($job_title && $company) {
-		$extra = ', ' . esc_html($job_title) . ' ' . esc_html($company);
-	} elseif ($job_title) {
-		$extra = ', ' . esc_html($job_title);
-	} elseif ($company) {
-		$extra = ', ' . esc_html($company);
-	}
-
-	$block_content = preg_replace(
-		'/(<a[^>]*>)(.*?)(<\/a>)/',
-		'$1$2' . $extra . '$3',
-		$block_content
-	);
-
-	return $block_content;
-
-}, 10, 2);
-
 function adamsons_search_excerpt_length($length) {
 	if (is_admin() || !is_search()) {
 		return $length;
@@ -1073,13 +1232,19 @@ function adamsons_search_excerpt_more($more) {
 }
 add_filter('excerpt_more', 'adamsons_search_excerpt_more', 20);
 
-add_shortcode('author_url', function () {
-    return esc_url(
-        get_author_posts_url(
-            get_post_field('post_author', get_the_ID())
-        )
-    );
-});
+function adamsons_author_url_shortcode() {
+	if ( ! is_singular() ) {
+		return '';
+	}
+
+	$author_id = adamsons_get_selected_author_profile_id( get_the_ID() );
+	if ( ! $author_id ) {
+		return '';
+	}
+
+	return esc_url( get_permalink( $author_id ) );
+}
+add_shortcode( 'author_url', 'adamsons_author_url_shortcode' );
 
 function adamsons_polylang_language_links_shortcode( $atts ) {
 
