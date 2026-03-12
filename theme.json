@@ -1,0 +1,81 @@
+{
+  "version": 2,
+  "settings": {
+    "appearanceTools": true,
+    "layout": {
+      "contentSize": "1180px",
+      "wideSize": "1400px"
+    },
+    "color": {
+      "palette": [
+        {
+          "color": "#0f2a22",
+          "name": "Ink",
+          "slug": "ink"
+        },
+        {
+          "color": "#18345c",
+          "name": "Navy",
+          "slug": "navy"
+        },
+        {
+          "color": "#f9f5e4",
+          "name": "Beige",
+          "slug": "beige"
+        },
+        {
+          "color": "#004225",
+          "name": "Green",
+          "slug": "green"
+        },
+        {
+          "color": "#0a3429",
+          "name": "Dark Green",
+          "slug": "green-2"
+        },
+        {
+          "color": "#a58955",
+          "name": "Gold",
+          "slug": "gold"
+        },
+        {
+          "color": "#ffffff",
+          "name": "White",
+          "slug": "white"
+        }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "fontFamily": "\"Open Sans\", ui-sans-serif, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", sans-serif",
+          "name": "Open Sans",
+          "slug": "open-sans"
+        },
+        {
+          "fontFamily": "\"neulis-neue\", ui-sans-serif, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", sans-serif",
+          "name": "Neulis Neue",
+          "slug": "neulis-neue"
+        }
+      ]
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "var(--wp--preset--color--beige)",
+      "text": "var(--wp--preset--color--ink)"
+    },
+    "typography": {
+      "fontFamily": "var(--wp--preset--font-family--open-sans)"
+    },
+    "elements": {
+      "heading": {
+        "typography": {
+          "fontFamily": "var(--wp--preset--font-family--neulis-neue)",
+          "letterSpacing": "0.10em",
+          "textTransform": "uppercase"
+        }
+      }
+    }
+  }
+}

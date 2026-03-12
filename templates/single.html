@@ -1,0 +1,54 @@
+<!-- wp:template-part {"slug":"header","tagName":"header"} /-->
+
+<!-- wp:group {"tagName":"main","layout":{"type":"constrained"}} -->
+<main class="wp-block-group">
+
+	<!-- wp:group {"className":"post-hero container","layout":{"type":"default"}} -->
+	<div class="wp-block-group post-hero container">
+		<!-- wp:post-terms {"term":"category","className":"post-hero__term"} /-->
+		<!-- wp:post-title {"level":1,"className":"post-hero__title"} /-->
+		<!-- wp:post-author-name {"isLink":true,"className":"post-hero__author"} /-->
+	</div>
+	<!-- /wp:group -->
+
+	<!-- wp:group {"className":"container","layout":{"type":"default"}} -->
+	<div class="wp-block-group container">
+		<!-- wp:post-content /-->
+	</div>
+	<!-- /wp:group -->
+
+	<!-- wp:group {"className":"alignfull"} -->
+	<div class="wp-block-group author-card alignfull">
+		<!-- wp:group {"className":"container author-card__inner","layout":{"type":"default"}} -->
+		<div class="wp-block-group container author-card__inner">
+			<!-- wp:shortcode -->[adamsons_author_image size="120" class="author-card__avatar"]<!-- /wp:shortcode -->
+
+			<!-- wp:group {"className":"author-card__content","layout":{"type":"default"}} -->
+			<div class="wp-block-group author-card__content">
+				<!-- wp:paragraph {"className":"author-card__eyebrow caps"} -->
+				<p class="author-card__eyebrow caps">For more information, <br>get in touch</p>
+				<!-- /wp:paragraph -->
+
+				<!-- wp:post-author-name {"className":"author-card__name"} /-->
+				<!-- wp:post-author-biography {"className":"author-card__bio"} /-->
+			</div>
+			<!-- /wp:group -->
+
+			<!-- wp:buttons {"className":"author-card__actions"} -->
+			<div class="wp-block-buttons author-card__actions">
+				<!-- wp:button {"className":"btn btn--secondary"} -->
+				<div class="wp-block-button btn btn--secondary"><a class="wp-block-button__link wp-element-button" href="[author_url]">See profile</a></div>
+				<!-- /wp:button -->
+			</div>
+			<!-- /wp:buttons -->
+		</div>
+		<!-- /wp:group -->
+	</div>
+	<!-- /wp:group -->
+
+	<!-- wp:adamsons/related-posts /-->
+
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->

@@ -1,0 +1,52 @@
+<!-- wp:template-part {"slug":"header","tagName":"header"} /-->
+
+<!-- wp:group {"tagName":"main","layout":{"type":"constrained"}} -->
+<main class="wp-block-group">
+	<!-- wp:group {"className":"ni-top","layout":{"type":"default"}} -->
+	<div class="wp-block-group ni-top">
+		<!-- wp:search {"label":"Search","showLabel":false,"placeholder":"Search","buttonText":"Search","buttonUseIcon":false,"className":"ni-search"} /-->
+
+		<!-- wp:group {"className":"ni-results","layout":{"type":"default"}} -->
+		<div class="wp-block-group ni-results">
+			<!-- wp:shortcode -->[adamsons_search_results]<!-- /wp:shortcode -->
+			<!-- wp:shortcode -->[adamsons_search_filter]<!-- /wp:shortcode -->
+		</div>
+		<!-- /wp:group -->
+	</div>
+	<!-- /wp:group -->
+
+	<!-- wp:group {"className":"ni-middle alignfull","layout":{"type":"default"}} -->
+	<div class="wp-block-group ni-middle alignfull" style="margin-bottom: 120px;">
+		<!-- wp:query {"queryId":1,"query":{"perPage":10,"postType":"post","order":"desc","orderBy":"date","inherit":true},"displayLayout":{"type":"list"}} -->
+		<div class="wp-block-query">
+			<!-- wp:post-template {"className":"ni-list"} -->
+			<!-- wp:group {"className":"ni-row","layout":{"type":"default"}} -->
+			<div class="wp-block-group ni-row">
+				<!-- wp:post-title {"isLink":true,"className":"ni-row__title"} /-->
+				<!-- wp:group {"className":"ni-row__meta","layout":{"type":"default"}} -->
+				<div class="wp-block-group ni-row__meta">
+					<!-- wp:post-excerpt {"moreText":"","className":"ni-row__excerpt"} /-->
+					<!-- wp:html -->
+					<span class="ni-row__arrow" aria-hidden="true">
+						<svg viewBox="0 0 465 268" aria-hidden="true" focusable="false"><path d="m764.288 214.592-252.288 252.288-252.288-252.288-45.12 45.12 252.16 252.288 45.248 45.184 45.12-45.12 252.288-252.352-45.12-45.184z" fill-rule="nonzero" transform="matrix(.78125 0 0 .78125 -167.65 -167.6)"/></svg>
+					</span>
+					<!-- /wp:html -->
+				</div>
+				<!-- /wp:group -->
+			</div>
+			<!-- /wp:group -->
+			<!-- /wp:post-template -->
+
+			<!-- wp:query-no-results -->
+			<!-- wp:paragraph {"className":"ni-empty"} -->
+			<p class="ni-empty">No results found.</p>
+			<!-- /wp:paragraph -->
+			<!-- /wp:query-no-results -->
+		</div>
+		<!-- /wp:query -->
+	</div>
+	<!-- /wp:group -->
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->
