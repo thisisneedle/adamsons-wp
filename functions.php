@@ -1,5 +1,9 @@
 <?php
 
+function asset_version(){
+    return '1.0.2';
+}
+
 function adamsons_setup() {
 	add_theme_support( 'editor-styles' );
 	add_editor_style( 'style.css' );
@@ -8,7 +12,7 @@ function adamsons_setup() {
 add_action( 'after_setup_theme', 'adamsons_setup' );
 
 function adamsons_enqueue_styles() {
-	wp_enqueue_style( 'adamsons-style', get_stylesheet_uri(), array(), wp_get_theme()->get( 'Version' ) );
+	wp_enqueue_style( 'adamsons-style', get_stylesheet_uri(), array(), asset_version() );
 	wp_enqueue_style( 'adamsons-open-sans', 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap', array(), null );
 	wp_enqueue_style( 'adamsons-neulis-neue', 'https://use.typekit.net/rlg1vvi.css', array(), null );
 }
@@ -17,7 +21,7 @@ add_action( 'wp_enqueue_scripts', 'adamsons_enqueue_styles' );
 function adamsons_enqueue_scripts() {
 	wp_enqueue_style( 'adamsons-open-sans', 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap', array(), null );
 	wp_enqueue_style( 'adamsons-neulis-neue', 'https://use.typekit.net/rlg1vvi.css', array(), null );
-	wp_enqueue_script( 'adamsons-main', get_template_directory_uri() . '/assets/js/main.min.js', array(), wp_get_theme()->get( 'Version' ), true );
+	wp_enqueue_script( 'adamsons-main', get_template_directory_uri() . '/assets/js/main.min.js', array(), asset_version(), true );
 }
 add_action( 'enqueue_block_assets', 'adamsons_enqueue_scripts' );
 
@@ -149,6 +153,44 @@ function adamsons_register_related_posts_static_pattern() {
 }
 add_action( 'init', 'adamsons_register_related_posts_static_pattern', 1 );
 
+function adamsons_register_expertise_links_pattern() {
+	if ( ! function_exists( 'register_block_pattern' ) ) {
+		return;
+	}
+
+	$slug = 'adamsons/expertise-links';
+
+	if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
+		$registry = WP_Block_Patterns_Registry::get_instance();
+		if ( $registry->is_registered( $slug ) ) {
+			return;
+		}
+	}
+
+	$pattern_file = get_theme_file_path( 'patterns/expertise-links.php' );
+	if ( ! $pattern_file || ! file_exists( $pattern_file ) ) {
+		return;
+	}
+
+	ob_start();
+	include $pattern_file;
+	$content = trim( ob_get_clean() );
+
+	if ( $content === '' ) {
+		return;
+	}
+
+	register_block_pattern(
+		$slug,
+		array(
+			'title'      => __( 'Expertise Links', 'adamsons' ),
+			'categories' => array( 'adamsons' ),
+			'content'    => $content,
+		)
+	);
+}
+add_action( 'init', 'adamsons_register_expertise_links_pattern', 1 );
+
 function adamsons_register_tabs_links_pattern() {
 	if ( ! function_exists( 'register_block_pattern' ) ) {
 		return;
@@ -186,6 +228,44 @@ function adamsons_register_tabs_links_pattern() {
 	);
 }
 add_action( 'init', 'adamsons_register_tabs_links_pattern', 1 );
+
+function adamsons_register_tabs_footer_pattern() {
+	if ( ! function_exists( 'register_block_pattern' ) ) {
+		return;
+	}
+
+	$slug = 'adamsons/tabs-footer';
+
+	if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
+		$registry = WP_Block_Patterns_Registry::get_instance();
+		if ( $registry->is_registered( $slug ) ) {
+			return;
+		}
+	}
+
+	$pattern_file = get_theme_file_path( 'patterns/tabs-footer.php' );
+	if ( ! $pattern_file || ! file_exists( $pattern_file ) ) {
+		return;
+	}
+
+	ob_start();
+	include $pattern_file;
+	$content = trim( ob_get_clean() );
+
+	if ( $content === '' ) {
+		return;
+	}
+
+	register_block_pattern(
+		$slug,
+		array(
+			'title'      => __( 'Tabs Footer', 'adamsons' ),
+			'categories' => array( 'adamsons' ),
+			'content'    => $content,
+		)
+	);
+}
+add_action( 'init', 'adamsons_register_tabs_footer_pattern', 1 );
 
 function adamsons_register_people_post_type() {
 	register_post_type(
@@ -991,6 +1071,73 @@ function adamsons_cleanup_related_posts_block_markup($block_content, $block) {
 }
 add_filter('render_block', 'adamsons_cleanup_related_posts_block_markup', 10, 2);
 
+function adamsons_get_preview_excerpt_by_url( $url ) {
+	$url = is_string( $url ) ? trim( $url ) : '';
+	if ( $url === '' ) {
+		return '';
+	}
+
+	if ( strpos( $url, '/' ) === 0 ) {
+		$url = home_url( $url );
+	}
+
+	$post_id = url_to_postid( $url );
+	if ( ! $post_id ) {
+		return '';
+	}
+
+	$post = get_post( $post_id );
+	if ( ! $post instanceof WP_Post || $post->post_status !== 'publish' ) {
+		return '';
+	}
+
+	$excerpt = trim( get_the_excerpt( $post ) );
+	if ( $excerpt !== '' ) {
+		return wp_strip_all_tags( $excerpt );
+	}
+
+	$content = trim( wp_strip_all_tags( strip_shortcodes( (string) $post->post_content ) ) );
+	if ( $content === '' ) {
+		return '';
+	}
+
+	return wp_trim_words( $content, 12, '&hellip;' );
+}
+
+function adamsons_render_expertise_row_excerpt( $block_content, $block ) {
+	if ( ! is_array( $block ) || empty( $block['blockName'] ) || $block['blockName'] !== 'core/group' ) {
+		return $block_content;
+	}
+
+	$class_name = '';
+	if ( ! empty( $block['attrs']['className'] ) && is_string( $block['attrs']['className'] ) ) {
+		$class_name = $block['attrs']['className'];
+	}
+
+	if ( $class_name === '' || strpos( $class_name, 'expertise-links__row' ) === false ) {
+		return $block_content;
+	}
+
+	if ( ! preg_match( '/<a\b[^>]*href="([^"]+)"/i', $block_content, $matches ) ) {
+		return $block_content;
+	}
+
+	$excerpt = adamsons_get_preview_excerpt_by_url( html_entity_decode( $matches[1], ENT_QUOTES, 'UTF-8' ) );
+	if ( $excerpt === '' ) {
+		return $block_content;
+	}
+
+	$updated_content = preg_replace(
+		'/<p\b([^>]*)class="([^"]*\bexpertise-links__excerpt\b[^"]*)"([^>]*)>.*?<\/p>/is',
+		'<p$1class="$2"$3>' . esc_html( $excerpt ) . '</p>',
+		$block_content,
+		1
+	);
+
+	return is_string( $updated_content ) ? $updated_content : $block_content;
+}
+add_filter( 'render_block', 'adamsons_render_expertise_row_excerpt', 10, 2 );
+
 function adamsons_get_search_filter_value() {
 	$filter = isset($_GET['filter']) ? sanitize_key($_GET['filter']) : '';
 	if ($filter === '') {
@@ -1177,6 +1324,32 @@ function add_inline_editor_styles() {
 		}
 		.author-card .components-placeholder > * {
 			display: none;
+		}
+		.expertise-links ul li {
+
+		}
+		.expertise-links ul li:before {
+			position: absolute;
+			top: 50%;
+			right: 0;
+			content: '';
+			width: 30px;
+			height: 30px;
+			margin-top: -15px;
+			pointer-events: none;
+			background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK0AAAEsCAYAAACxNDOKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAylpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDEwLjAtYzAwMCA3OS5kMjBlNDY2MzAsIDIwMjUvMTIvMDktMDI6MTE6MjMgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCAyNy40IChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjVGRUE1NTgzMTY5RjExRjFBRjMxREVBM0U5M0FENkU0IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjVGRUE1NTg0MTY5RjExRjFBRjMxREVBM0U5M0FENkU0Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NUZFQTU1ODExNjlGMTFGMUFGMzFERUEzRTkzQUQ2RTQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NUZFQTU1ODIxNjlGMTFGMUFGMzFERUEzRTkzQUQ2RTQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz67uFh4AAAFhElEQVR42uzdy43TUABAUc9sWNACxcUdUAIdhA6SluiBFliwGjyjbEADzMdOfO1zJStbKzmxnPh9hmGhfv74fpyOwyAVmrCepuPhcoCrFFhwNXt3c4OdXv4GdPzw8dPZW67VoP0PWHC1LrQvBAuu1oH2lWDB1W3RvhEsuLoN2neCBVfXRTsTWHB1HbQzgwVXy6JdCCy4WgbtwmDB1bxorwQWXM2D9spgwdX70N4ILLh6G9obgwVXr0O7ErDg6mVoVwYWXP0b7UrBgqvn0a4cLLj6HW0ELLh66v5x1mwI7GMnc852jnY6vgXPG1y3B08ATsHzd6uw8x9i4Cr5lxe4Sj5cAFfJx7jgKjlgBlwlhyaCq+QgcHCVnG4DrpITG8FVcgo5uEou1gGukssigavkAnTgKrnUJ7hKLqoMrpLL14Or5EYh4Cq5JRO4aqEFV0m04CqJFlwl0YKrJFpwlUQLrpJowVUSLbhKogVXSbTgKokWXCXRgqskWnCVRAuukmjBVRItuEqiBVdJtOAqiRZcJdGCqyRacJVEC66GZ3ZsXH2XD34cmjtLHjHb4ZV2A1fc8/TFG3HbIVpwlUQLru6qJw4utOCCCy244EILrraEFlxowQUXWnDBhRZcaMEFF1pwwYUWXO0ILbjQggsutOCCCy240IILLrTgggstuNCCCy604IILLbg7hwstuNCCCy604IILLbjQggsutOCCCy240IILLrTgggstuNuGCy240IILLrTgggstuHW40II7QgsuuNCCCy604MbhQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDi604ObgQgtuDu69j3h7TR/8eXop7lxzmL5wX1xpXXGLV9zx8sWDFtxtwIUW3BxcaMHNwYUW3BxcaMHNwYUW3BxcaMHNwfVwQbmgdZUt9dXtAbBDcVwCtMDmBtJAC2xu5Be0wOaGKkILbG5sLbTA5gaDQwtsbvYCtMDmpttAC6yJjQLWFHIBCy2wlkUSsBagE7DQAmtRZQFr+XoBCy2wtmQSsDa/E7DQAmtDZwG7VrDQApsDCy2wObDQApsDCy2wObDQApsDCy2wObDQApsDCy2wObDQApsDCy2wObDQApsDCy2wObDQApsDCy2wObDQApsDCy2wObDQApsDCy2wObDQApsDCy2wObDQApsDCy2wObDQAjsW33NogYUWWGChBRZYaIGFFlhgoQUWWGiB3VjQAgstsMBCCyyw0AILLbDAQgsssNACCy2wwEILLLDQAgstsMBCCyyw0AILLbDAQgsssNACCy2wwEILLLDQAqttowUWWmCBhRZYYKEFFlpggYUWWGChBRZaYIGFFlhgoQVWTbTAKoUWWKXQAqsUWmCVQgusUmiBVQotsEqhBVYptMAqhRZYpdACqxRaYJVCC6xSaIFVCi2wSqEFVim0wCqFFlil0AKrFFpglUILrFJogVUKLbBKoQVWKbTAKoUWWKXQAqsUWmCVQgusUmiBVQotsEqhBVYptMAqhRZYpdACqxRaYJVCC6xSaIFVCi2wSqEFVim0wCqFFlil0AKrFFpgVes+et7Auj1IXW2BhTb1QwxYpf7yAlaphwvAKvUYF1ilBswAq9TQRGCVGgQOrFLTbYBVamLjOIE9+1hUmUIOrFKLdQCr1LJIwCq1AB2wSi31CaxSiyoDq9Ty9cAqtVEIsEptyQSs1tkE9/N0PPxxHLwzWjvcE7Aqwj0CqyX6JcAAT60Nq4R4LCQAAAAASUVORK5CYII=) 50% 50% no-repeat;
+			background-size: contain;
+		}
+		.expertise-links ul li textarea,
+		.expertise-links ul li > .rich-text {
+			display: none !important;
+		}
+		.expertise-links .block-editor-block-list__block {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+		.expertise-links .ni-row:hover {
+			transform: none;
 		}
     ";
     add_action('enqueue_block_editor_assets', function() use ($custom_css) {
